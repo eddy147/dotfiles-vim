@@ -13,6 +13,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'tobyS/vmustache'
 Plugin 'tobyS/pdv'
+Plugin 'airblade/vim-gitgutter'
 call vundle#end()
 
 filetype plugin indent on    " required
