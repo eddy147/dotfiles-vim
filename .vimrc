@@ -1,4 +1,9 @@
-colorscheme pablo
+execute pathogen#infect()
+syntax enable
+set background=light
+set term=xterm-256color
+let g:solarized_termcolors=256
+colorscheme solarized
 
 " set the runtime path to include Vundle and initialize
 set nocompatible
@@ -14,6 +19,8 @@ Plugin 'majutsushi/tagbar'
 Plugin 'tobyS/vmustache'
 Plugin 'tobyS/pdv'
 Plugin 'airblade/vim-gitgutter'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 call vundle#end()
 
 filetype plugin indent on    " required
@@ -87,3 +94,12 @@ au FileType xml exe ":silent %!xmllint --format --recover - 2>/dev/null"
 
 filetype plugin on
 set omnifunc=syntaxcomplete#Complete
+
+"airline
+let g:airline_theme = 'solarized'
+set laststatus=2
+set guifont=DejaVu\ Sans\ Mono\ for\ Powerline "make sure to escape the spaces in the name properly
+set encoding=utf-8
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#branch#enabled = 1
