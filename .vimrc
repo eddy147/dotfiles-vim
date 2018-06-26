@@ -1,105 +1,168 @@
-execute pathogen#infect()
-syntax enable
-set background=light
-set term=xterm-256color
-let g:solarized_termcolors=256
-colorscheme solarized
-
-" set the runtime path to include Vundle and initialize
-set nocompatible
-filetype off
-set rtp+=~/.vim/bundle/Vundle.vim
-
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'scrooloose/nerdtree'
-Plugin 'majutsushi/tagbar'
-Plugin 'tobyS/vmustache'
-Plugin 'tobyS/pdv'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-call vundle#end()
-
-filetype plugin indent on    " required
-syntax enable           " enable syntax processing
-
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
-
-" see http://dougblack.io/words/a-good-vimrc.html
-
-set autoindent          " adds a newline with the same indentation
-set tabstop=4           " number of visual spaces per TAB
-set softtabstop=4       " number of spaces in tab when editing
-set shiftwidth=4        " on pressing tab, insert 4 spaces
-set expandtab           " tabs are spaces
-set number              " show line numbers
-set showcmd             " show command in bottom bar
-set wildmenu            " visual autocomplete for command menu
-set lazyredraw          " redraw only when we need to.
-set incsearch           " search as characters are entered
-set hlsearch            " highlight matches
-set nowrap
-set ignorecase          "for search
-set showmatch           " highlight matching [{()}]
-
-" turn off search highlight
-nnoremap <leader><space> :nohlsearch<CR>
-
-" CtrlP settings
-" let g:ctrlp_match_window = 'bottom,order:ttb'
-" let g:ctrlp_switch_buffer = 0
-" let g:ctrlp_working_path_mode = 0
-" let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
-let g:ctrlp_max_files=0 
-let g:ctrlp_max_depth=40
-
-" allows cursor change in tmux mode
-if exists('$TMUX')
-  let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
-  let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
-else
-  let &t_SI = "\<Esc>]50;CursorShape=1\x7"
-  let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+" Install vim-plug if we don't already have it
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+call plug#begin('~/.vim/plugged')
 
-" ctags, see https://github.com/shawncplus/phpcomplete.vim
-set tags+=~/tags/mcepd.tags
-autocmd BufWritePost *
-      \ if filereadable('/home/vagrant/tags/mcepd.tags') |
-      \   call system('phpctags --append=yes --recurse=yes '.expand('%')) |
-      \ endif
-let g:phpcomplete_parse_docblock_comments=1
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
-" NERDTree
-map <C-n> :NERDTreeToggle<CR>
-let g:NERDTreeDirArrowExpandable = '>'
-let g:NERDTreeDirArrowCollapsible = '<'
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+call plug#end()
 
-" TagBar
-nmap <F8> :TagbarToggle<CR>
+" fzf
+set rtp+=~/.fzf
+" --column: Show column number
+" --line-number: Show line number
+" --no-heading: Do not show file headings in results
+" --fixed-strings: Search term as a literal string
+" --ignore-case: Case insensitive search
+" --no-ignore: Do not respect .gitignore, etc...
+" --hidden: Search hidden files and folders
+" --follow: Follow symlinks
+" --glob: Additional conditions for search (in this case ignore
+"     everything in the .git/ folder)
+" --color: Search color options
+" command! -bang -nargs=* Find call fzf#vim#grep('rg --column
+"         --line-number --no-heading --fixed-strings --ignore-case --no-ignore
+"         --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+nnoremap <C-p> :Files<CR>
 
-" Auto-reloading a file in VIM as soon as it changes on disk
-set autoread
+" Don't try to be vi compatible
+set nocompatible
 
-" Autoformat XML
-au FileType xml exe ":silent %!xmllint --format --recover - 2>/dev/null"
+" Helps force plugins to load correctly when it is turned back on below
+filetype off
 
+" TODO: Load plugins here (pathogen or vundle)
 
-filetype plugin on
-set omnifunc=syntaxcomplete#Complete
+" Turn on syntax highlighting
+syntax on
 
-"airline
-let g:airline_theme = 'solarized'
-set laststatus=2
-set guifont=DejaVu\ Sans\ Mono\ for\ Powerline "make sure to escape the spaces in the name properly
+" For plugins to load correctly
+filetype plugin indent on
+
+" TODO: Pick a leader key
+" let mapleader = ","
+
+" Security
+set modelines=0
+
+" Show line numbers
+set number
+
+" Show file stats
+set ruler
+
+" Blink cursor on error instead of beeping (grr)
+set visualbell
+" Encoding
 set encoding=utf-8
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#branch#enabled = 1
+
+" Whitespace
+set wrap
+set textwidth=79
+set formatoptions=tcqrn1
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set noshiftround
+
+" Cursor motion
+set scrolloff=3
+set backspace=indent,eol,start
+set matchpairs+=<:> " use % to jump between pairs
+runtime! macros/matchit.vim
+
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+" Allow hidden buffers
+set hidden
+
+" Rendering
+set ttyfast
+
+" Status bar
+set laststatus=2
+
+" Last line
+set showmode
+set showcmd
+
+" Searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmatch
+map <leader><space> :let @/=''<cr> " clear search
+
+" Remap help key.
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+nnoremap <F1> :set invfullscreen<CR>
+vnoremap <F1> :set invfullscreen<CR>
+
+" Textmate holdouts
+
+" Formatting
+map <leader>q gqip
+set backspace=indent,eol,start
+set matchpairs+=<:> " use % to jump between pairs
+runtime! macros/matchit.vim
+
+" Move up/down editor lines
+nnoremap j gj
+nnoremap k gk
+
+" Allow hidden buffers
+set hidden
+
+" Rendering
+set ttyfast
+
+" Status bar
+set laststatus=2
+
+" Last line
+set showmode
+set showcmd
+
+" Searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set showmatch
+map <leader><space> :let @/=''<cr> " clear search
+
+" Remap help key.
+inoremap <F1> <ESC>:set invfullscreen<CR>a
+nnoremap <F1> :set invfullscreen<CR>
+vnoremap <F1> :set invfullscreen<CR>
+
+" Textmate holdouts
+
+" Formatting
+map <leader>q gqip
+
+" Visualize tabs and newlines
+set listchars=tab:▸\ ,eol:¬
+" Uncomment this to enable by default:
+" set list " To enable by default
+" Or use your leader key + l to toggle on/off
+map <leader>l :set list!<CR> " Toggle tabs and EOL
+
+" Color scheme (terminal)
+set t_Co=256
+set background=dark
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+" put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
+" in ~/.vim/colors/ and uncomment:
+" colorscheme solarized
+
