@@ -9,6 +9,13 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'guns/vim-clojure-static'
+Plug 'tpope/vim-fireplace'
+Plug 'luochen1990/rainbow'
+Plug 'guns/vim-sexp'
+Plug 'guns/vim-sexp'
+Plug 'venantius/vim-cljfmt'
+Plug 'venantius/vim-eastwood'
 
 call plug#end()
 
@@ -29,6 +36,8 @@ set rtp+=~/.fzf
 "         --line-number --no-heading --fixed-strings --ignore-case --no-ignore
 "         --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
 nnoremap <C-p> :Files<CR>
+
+colorscheme pablo
 
 " Don't try to be vi compatible
 set nocompatible
@@ -165,4 +174,11 @@ let g:solarized_termtrans=1
 " put https://raw.github.com/altercation/vim-colors-solarized/master/colors/solarized.vim
 " in ~/.vim/colors/ and uncomment:
 " colorscheme solarized
+
+let g:rainbow_active = 1
+" a few extra mappings for fireplace
+" evaluate top level form
+au BufEnter *.clj nnoremap <buffer> cpt :Eval<CR>
+" show last evaluation in temp file
+au BufEnter *.clj nnoremap <buffer> cpl :Last<CR>
 
